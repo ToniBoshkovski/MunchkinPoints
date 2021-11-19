@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:munchkin_points/globals.dart';
+import 'package:munchkin_points/models/player.dart';
 
 class PlayersNames extends StatefulWidget {
   final int? numPlayers;
@@ -11,14 +13,17 @@ class PlayersNames extends StatefulWidget {
 
 class _PlayersNamesState extends State<PlayersNames> {
   final _formKey = GlobalKey<FormState>();
+  List<TextEditingController> textEditingControllers = [];
 
   List<Widget> createTextFields(int? players) {
     List<Widget> fieldsList = [];
     for (int i = 0; i < players!; i++) {
+      TextEditingController _controller = TextEditingController();
       fieldsList.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 20.0),
           child: TextFormField(
+            controller: _controller,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               labelText: 'Player ${i + 1}',
@@ -33,6 +38,7 @@ class _PlayersNamesState extends State<PlayersNames> {
           ),
         ),
       );
+      textEditingControllers.add(_controller);
     }
 
     return fieldsList;
@@ -64,8 +70,12 @@ class _PlayersNamesState extends State<PlayersNames> {
                     "New Game",
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      for (var controller in textEditingControllers) {
+                        Player player = Player(null, controller.text, 1);
+                        await dbHelper.insertPlayer(player);
+                      }
                       // navigate to grid view page
                     }
                   },

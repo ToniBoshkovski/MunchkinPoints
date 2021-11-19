@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:munchkin_points/globals.dart';
+import 'package:munchkin_points/models/player.dart';
 
 class NumPlayers extends StatefulWidget {
   const NumPlayers({Key? key}) : super(key: key);
@@ -92,7 +94,8 @@ class _NumPlayersState extends State<NumPlayers> {
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, "/enterPlayers", arguments: numPlayers);
+                      Navigator.pushNamed(context, enterPlayersRoute,
+                          arguments: numPlayers);
                     },
                     style: ButtonStyle(
                       backgroundColor:
