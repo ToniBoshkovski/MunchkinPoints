@@ -76,7 +76,8 @@ class _PlayersNamesState extends State<PlayersNames> {
                         Player player = Player(null, controller.text, 1);
                         await dbHelper.insertPlayer(player);
                       }
-                      Navigator.pushNamed(context, showPlayersRoute);
+                      Navigator.pushNamed(
+                          navigatorKey.currentContext!, showPlayersRoute);
                     }
                   },
                   style: ButtonStyle(

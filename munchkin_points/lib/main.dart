@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:munchkin_points/globals.dart';
-import 'package:munchkin_points/models/player.dart';
 import 'package:munchkin_points/screens/enter_players.dart';
+import 'package:munchkin_points/screens/loading_page.dart';
 import 'package:munchkin_points/screens/num_players.dart';
 import 'package:munchkin_points/screens/show_players.dart';
 
@@ -18,44 +18,21 @@ class MyApp extends StatefulWidget {
   }
 }
 
-class MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  @override
-  initState() {
-    super.initState();
-    WidgetsBinding.instance!.addObserver(this);
-  }
-
-  @override
-  Future didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.resumed:
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.detached:
-        break;
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
-    super.dispose();
-  }
-
+class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Munchkin Points',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: homeRoute,
+      initialRoute: loadingRoute,
       onGenerateRoute: (settings) {
         switch (settings.name) {
-          case homeRoute:
+          case loadingRoute:
+            return MaterialPageRoute(builder: (context) => const LoadingPage());
+          case numPlayersRoute:
             return MaterialPageRoute(builder: (context) => const NumPlayers());
           case enterPlayersRoute:
             final value = settings.arguments as int;

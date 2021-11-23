@@ -93,7 +93,7 @@ class _NumPlayersState extends State<NumPlayers> {
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                     onPressed: () => Navigator.pushNamed(
-                        context, enterPlayersRoute,
+                        navigatorKey.currentContext!, enterPlayersRoute,
                         arguments: numPlayers),
                     style: ButtonStyle(
                       backgroundColor:
