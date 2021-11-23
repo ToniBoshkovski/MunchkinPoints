@@ -10,7 +10,7 @@ const String columnPoints = 'points';
 // routes
 const String homeRoute = '/';
 const String enterPlayersRoute = '/enterPlayers';
-const String showPlayerPointsRoute = '/showPlayerPoints';
+const String showPlayersRoute = '/showPlayers';
 
 // global variables
 DatabaseHelper dbHelper = DatabaseHelper.instance;

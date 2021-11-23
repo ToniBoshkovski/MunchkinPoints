@@ -73,16 +73,13 @@ class DatabaseHelper {
 
   Future<List<Player>> getAllPlayers() async {
     List<Player> listOfPlayers = <Player>[];
-
-    try {
-      Database db = await database;
-      final maps = await db.query(tablePlayers);
-      if (maps.isNotEmpty) {
-        for (var map in maps) {
-          listOfPlayers.add(Player.fromDbMap(map));
-        }
+    Database db = await database;
+    final maps = await db.query(tablePlayers);
+    if (maps.isNotEmpty) {
+      for (var map in maps) {
+        listOfPlayers.add(Player.fromDbMap(map));
       }
-    } catch (err, stack) {}
+    }
     return listOfPlayers;
   }
 

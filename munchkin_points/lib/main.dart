@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:munchkin_points/globals.dart';
+import 'package:munchkin_points/models/player.dart';
 import 'package:munchkin_points/screens/enter_players.dart';
 import 'package:munchkin_points/screens/num_players.dart';
+import 'package:munchkin_points/screens/show_players.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +31,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.resumed:
-        // get data from db
         break;
       case AppLifecycleState.paused:
         break;
@@ -60,6 +61,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             final value = settings.arguments as int;
             return MaterialPageRoute(
                 builder: (_) => PlayersNames(numPlayers: value));
+          case showPlayersRoute:
+            return MaterialPageRoute(builder: (context) => const ShowPlayers());
         }
       },
     );

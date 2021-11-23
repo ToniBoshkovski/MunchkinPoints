@@ -76,7 +76,7 @@ class _PlayersNamesState extends State<PlayersNames> {
                         Player player = Player(null, controller.text, 1);
                         await dbHelper.insertPlayer(player);
                       }
-                      // navigate to grid view page
+                      Navigator.pushNamed(context, showPlayersRoute);
                     }
                   },
                   style: ButtonStyle(
