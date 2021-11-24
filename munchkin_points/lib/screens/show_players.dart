@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:munchkin_points/globals.dart';
+import 'package:munchkin_points/models/game_counter.dart';
 import 'package:munchkin_points/models/player.dart';
 
 class ShowPlayers extends StatefulWidget {
@@ -19,6 +22,47 @@ class _ShowPlayer extends State<ShowPlayers> {
     Colors.yellow,
     Colors.pinkAccent
   ];
+  late Timer timer;
+  ValueNotifier<String> showCurrentTimer = ValueNotifier("--:--:--");
+
+  @override
+  initState() {
+    super.initState();
+    initializeElapsedTimeCounter();
+  }
+
+  Future initializeElapsedTimeCounter() async {
+    DateTime startDateTime = DateTime.now();
+    GameCounter? counter = await dbHelper.getGameCounter();
+    if (counter != null) {
+      if (startDateTime.difference(counter.elapsedTime!).inHours >= 3) {
+        await quitGame();
+        return;
+      }
+      startDateTime = counter.elapsedTime!;
+    } else {
+      await dbHelper.insertGameCounter(GameCounter(null, startDateTime));
+    }
+
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      int hours =
+          DateTime.now().difference(startDateTime).inHours.remainder(60);
+      int minutes =
+          DateTime.now().difference(startDateTime).inMinutes.remainder(60);
+      int seconds =
+          DateTime.now().difference(startDateTime).inSeconds.remainder(60);
+      String time =
+          "${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+      showCurrentTimer.value = time;
+    });
+  }
+
+  Future quitGame() async {
+    await dbHelper.deleteAllPlayers();
+    await dbHelper.deleteGameCounter();
+    Navigator.pushNamedAndRemoveUntil(
+        navigatorKey.currentContext!, numPlayersRoute, (route) => false);
+  }
 
   showAlertDialog(BuildContext context) {
     // set up the AlertDialog
@@ -31,7 +75,7 @@ class _ShowPlayer extends State<ShowPlayers> {
             style: TextStyle(fontSize: 16),
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(navigatorKey.currentContext!);
           },
         ),
         TextButton(
@@ -39,11 +83,7 @@ class _ShowPlayer extends State<ShowPlayers> {
             "Confirm",
             style: TextStyle(fontSize: 16),
           ),
-          onPressed: () async {
-            await dbHelper.deleteAllPlayers();
-            Navigator.pushNamedAndRemoveUntil(
-                context, homeRoute, (route) => false);
-          },
+          onPressed: () async => await quitGame(),
         ),
       ],
     );
@@ -161,13 +201,24 @@ class _ShowPlayer extends State<ShowPlayers> {
   }
 
   @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text("Players points"),
+          title: ValueListenableBuilder(
+            valueListenable: showCurrentTimer,
+            builder: (context, value, widget) {
+              return Text("$value");
+            },
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10.0),

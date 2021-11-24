@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:munchkin_points/globals.dart';
+import 'package:munchkin_points/models/game_counter.dart';
 import 'package:munchkin_points/models/player.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -48,6 +49,13 @@ class DatabaseHelper {
                 $columnId INTEGER PRIMARY KEY,
                 $columnName TEXT NULL,
                 $columnPoints INT NULL
+              );
+              ''');
+
+    await db.execute('''
+              CREATE TABLE $tableGameCounter (
+                $columnId INTEGER PRIMARY KEY,
+                $columnElapsedTime INT NULL
               );
               ''');
   }
@@ -105,5 +113,24 @@ class DatabaseHelper {
   Future deleteAllPlayers() async {
     Database db = await database;
     await db.delete(tablePlayers);
+  }
+
+  Future insertGameCounter(GameCounter counter) async {
+    Database db = await database;
+    await db.insert(tableGameCounter, counter.toDbMap());
+  }
+
+  Future getGameCounter() async {
+    Database db = await database;
+    final maps = await db.query(tableGameCounter);
+    if (maps.isNotEmpty) {
+      return GameCounter.fromDbMap(maps.first);
+    }
+    return null;
+  }
+
+  Future deleteGameCounter() async {
+    Database db = await database;
+    await db.delete(tableGameCounter);
   }
 }
